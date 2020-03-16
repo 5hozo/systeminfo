@@ -117,8 +117,10 @@ namespace TerminalServices
         public static List<String> ListSessions(String ServerName)
         {
             IntPtr server = IntPtr.Zero;
-            List<String> ret = new List<string>();
             server = OpenServer(ServerName);
+
+            List<String> ret = new List<string>();
+            ret.Add("SessionID\tState\tpWinStationName\tWTSClientIP\tWTSClientName\tWTSDomainName\tWTSUserName");
 
             try
             {
