@@ -59,7 +59,7 @@ namespace ConsoleServices
         public static List<String> ListNetworkInterface()
         {
             List<String> ret = new List<string>();
-            ret.Add("Name\tDescription\tStatus\tNetworkInterfaceType\tPhysicalAddress\tSpeed\tUnicastAddresses\tGatewayAddresses\tDhcpServerAddresses\tDnsAddresses\tWinsServersAddresses");
+            ret.Add("Name\tDescription\tStatus\tNetworkInterfaceType\tPhysicalAddress\tSpeed\tUnicastAddresses\tNetMask\tGatewayAddresses\tDhcpServerAddresses\tDnsAddresses\tWinsServersAddresses");
 
             var interfaces = NetworkInterface.GetAllNetworkInterfaces();
          
@@ -75,11 +75,10 @@ namespace ConsoleServices
                 retline += adapter.Speed.ToString() + "\t";
 
                 var ipproperties = adapter.GetIPProperties();
-                retline += ipproperties.DnsSuffix.ToString() + "\t";
 
                 foreach (var unicastaddress in ipproperties.UnicastAddresses)
                 {
-                    retline += unicastaddress.Address.ToString() + "/";
+                    retline += unicastaddress.Address.ToString() + "\t";
                     retline += unicastaddress.IPv4Mask.ToString() + "\t";
                 }
 
@@ -112,149 +111,79 @@ namespace ConsoleServices
             return ret;
         }
 
-        public static List<String> ListOS()
+        private static List<String> ListWMIC(string ClassName,string HeaderTSV)
         {
-            //https://docs.microsoft.com/ja-jp/dotnet/api/system.management.managementpath?view=netframework-4.8
             List<String> ret = new List<string>();
-            ret.Add("Name\tCaption\tDescription\tVersion\tBuildNumber\tManufacturer\tLocale\tOSLanguage\tSerialNumber");
+            ret.Add(HeaderTSV);
 
-            ManagementClass managementclass = new ManagementClass("Win32_OperatingSystem");
+            string[] propertynames =  HeaderTSV.Split("\t");
+
+            ManagementClass managementclass = new ManagementClass(ClassName);
             ManagementObjectCollection managementobjectcollection = managementclass.GetInstances();
             foreach (ManagementObject managementobject in managementobjectcollection)
             {
                 string retline = "";
 
-                retline += managementobject.Properties["Name"].Value.ToString() + "\t";
-                retline += managementobject.Properties["Caption"].Value.ToString() + "\t";
-                retline += managementobject.Properties["Description"].Value.ToString() + "\t";
-                retline += managementobject.Properties["Version"].Value.ToString() + "\t";
-                retline += managementobject.Properties["BuildNumber"].Value.ToString() + "\t";
-                retline += managementobject.Properties["Manufacturer"].Value.ToString() + "\t";
-                retline += managementobject.Properties["Locale"].Value.ToString() + "\t";
-                retline += managementobject.Properties["OSLanguage"].Value.ToString() + "\t";
-                retline += managementobject.Properties["SerialNumber"].Value.ToString() + "\t";
-
+                foreach (string propertyname in propertynames)
+                {
+                    if(managementobject.Properties[propertyname].Value != null)
+                    {
+                        retline += managementobject.Properties[propertyname].Value.ToString() + "\t";
+                    }
+                    else
+                    {
+                        retline += "\t";
+                    }
+                }
                 ret.Add(retline);
             }
             return ret;
         
+        }
+        public static List<String> ListOS()
+        {
+            return ListWMIC("Win32_OperatingSystem","Name\tCaption\tDescription\tVersion\tBuildNumber\tManufacturer\tLocale\tOSLanguage\tSerialNumber");
         }
 
         public static List<String> ListProcessor()
         {
-            //https://docs.microsoft.com/ja-jp/dotnet/api/system.management.managementpath?view=netframework-4.8
             //https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/win32-processor
-            List<String> ret = new List<string>();
-            ret.Add("Name\tCaption\tDescription\tDeviceID\tManufacturer\tArchitecture\tCurrentClockSpeed\tMaxClockSpeed\tNumberOfCores\tPartNumber\tSerialNumber");
-
-            ManagementClass managementclass = new ManagementClass("Win32_Processor");
-            ManagementObjectCollection managementobjectcollection = managementclass.GetInstances();
-            foreach (ManagementObject managementobject in managementobjectcollection)
-            {
-                string retline = "";
-
-                retline += managementobject.Properties["Name"].Value.ToString() + "\t";
-                retline += managementobject.Properties["Caption"].Value.ToString() + "\t";
-                retline += managementobject.Properties["Description"].Value.ToString() + "\t";
-                retline += managementobject.Properties["DeviceID"].Value.ToString() + "\t";
-                retline += managementobject.Properties["Manufacturer"].Value.ToString() + "\t";
-                retline += managementobject.Properties["Architecture"].Value.ToString() + "\t";
-                retline += managementobject.Properties["CurrentClockSpeed"].Value.ToString() + "\t";
-                retline += managementobject.Properties["MaxClockSpeed"].Value.ToString() + "\t";
-                retline += managementobject.Properties["NumberOfCores"].Value.ToString() + "\t";
-                retline += managementobject.Properties["PartNumber"].Value.ToString() + "\t";
-                retline += managementobject.Properties["SerialNumber"].Value.ToString() + "\t";
-
-                ret.Add(retline);
-            }
-            return ret;
-        
+            return ListWMIC("Win32_Processor","Name\tCaption\tDescription\tDeviceID\tManufacturer\tArchitecture\tCurrentClockSpeed\tMaxClockSpeed\tNumberOfCores\tPartNumber\tSerialNumber");
         }
 
         public static List<String> ListBaseBoard()
         {
-            //https://docs.microsoft.com/ja-jp/dotnet/api/system.management.managementpath?view=netframework-4.8
             //https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/win32-processor
-            List<String> ret = new List<string>();
-            ret.Add("Caption\tDescription\tManufacturer\tModel\tName\tOtherIdentifyingInfo\tPartNumber\tProduct\tSerialNumber\tSKU\tVersion");
-
-            string[] propertynames = new string[11] {"Caption","Description","Manufacturer","Model","Name","OtherIdentifyingInfo","PartNumber","Product","SerialNumber","SKU","Version"};
-
-            ManagementClass managementclass = new ManagementClass("Win32_BaseBoard");
-            ManagementObjectCollection managementobjectcollection = managementclass.GetInstances();
-            foreach (ManagementObject managementobject in managementobjectcollection)
-            {
-                string retline = "";
-
-                foreach (string propertyname in propertynames)
-                {
-                    if(managementobject.Properties[propertyname].Value != null)
-                    {
-                        retline += managementobject.Properties[propertyname].Value.ToString() + "\t";
-                    }
-                    else
-                    {
-                        retline += "\t";
-                    }
-                }
-                ret.Add(retline);
-            }
-            return ret;
-        
+            return ListWMIC("Win32_BaseBoard","Caption\tDescription\tManufacturer\tModel\tName\tOtherIdentifyingInfo\tPartNumber\tProduct\tSerialNumber\tSKU\tVersion");
         }
 
         public static List<String> ListBIOS()
         {
-            //https://docs.microsoft.com/ja-jp/dotnet/api/system.management.managementpath?view=netframework-4.8
             //https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/win32-bios
-            List<String> ret = new List<string>();
-            ret.Add("BuildNumber\tCaption\tCodeSet\tCurrentLanguage\tDescription\tIdentificationCode\tLanguageEdition\tManufacturer\tName\tOtherTargetOS\tSerialNumber\tSMBIOSBIOSVersion\tSoftwareElementID\tVersion");
+            return ListWMIC("Win32_BIOS","BuildNumber\tCaption\tCodeSet\tCurrentLanguage\tDescription\tIdentificationCode\tLanguageEdition\tManufacturer\tName\tOtherTargetOS\tSerialNumber\tSMBIOSBIOSVersion\tSoftwareElementID\tVersion");
+        }
 
-            string[] propertynames = new string[14] {"BuildNumber","Caption","CodeSet","CurrentLanguage","Description","IdentificationCode","LanguageEdition","Manufacturer","Name","OtherTargetOS","SerialNumber","SMBIOSBIOSVersion","SoftwareElementID","Version"};
-
-            ManagementClass managementclass = new ManagementClass("Win32_BIOS");
-            ManagementObjectCollection managementobjectcollection = managementclass.GetInstances();
-            foreach (ManagementObject managementobject in managementobjectcollection)
-            {
-                string retline = "";
-
-                foreach (string propertyname in propertynames)
-                {
-                    if(managementobject.Properties[propertyname].Value != null)
-                    {
-                        retline += managementobject.Properties[propertyname].Value.ToString() + "\t";
-                    }
-                    else
-                    {
-                        retline += "\t";
-                    }
-                }
-                ret.Add(retline);
-            }
-            return ret;
-        
+        public static List<String> ListComputerSystem()
+        {
+            //https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/win32-computersystem
+            return ListWMIC("Win32_ComputerSystem","BootupState\tCaption\tChassisSKUNumber\tDescription\tDNSHostName\tDomain\tLastLoadInfo\tManufacturer\tModel\tName\tNameFormat\tPrimaryOwnerContact\tPrimaryOwnerName\tStatus\tSystemFamily\tSystemSKUNumber\tSystemType\tUserName\tWorkgroup");
         }
 
         public static List<String> ListShareFolders()
         {
-            //https://docs.microsoft.com/ja-jp/dotnet/api/system.management.managementpath?view=netframework-4.8
-            List<String> ret = new List<string>();
-            ret.Add("Name\tPath\tCaption");
-
-            ManagementClass managementclass = new ManagementClass("Win32_Share");
-            ManagementObjectCollection managementobjectcollection = managementclass.GetInstances();
-            foreach (ManagementObject managementobject in managementobjectcollection)
-            {
-                string retline = "";
-
-                retline += managementobject.Properties["Name"].Value.ToString() + "\t";
-                retline += managementobject.Properties["Path"].Value.ToString() + "\t";
-                retline += managementobject.Properties["Caption"].Value.ToString() + "\t";
-
-                ret.Add(retline);
-            }
-            return ret;
+            return ListWMIC("Win32_Share","Name\tPath\tCaption");
+        }
         
+        public static List<String> ListProducts()
+        {
+            //https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa394378(v=vs.85)
+            return ListWMIC("Win32_Product","Name\tCaption\tDescription\tIdentifyingNumber\tInstallDate\tInstallSource\tLocalPackage\tPackageCode\tPackageName\tProductID\tSKUNumber\tVendor\tVersion");
+        }
+
+        public static List<String> ListService()
+        {
+            //https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/win32-service
+            return ListWMIC("Win32_Service","Caption\tDisplayName\tName\tPathName\tServiceType\tStartMode\tStartName\tState\tStatus\tSystemName");
         }
 
         public static List<String> ListWindowsupdates()
@@ -344,64 +273,6 @@ namespace ConsoleServices
                 retline += managementobject.Properties["NISSignatureVersion"].Value.ToString() + "\t";
                 retline += managementobject.Properties["AMEngineVersion"].Value.ToString() + "\t";
                 retline += managementobject.Properties["NISEngineVersion"].Value.ToString() + "\t";
-
-                ret.Add(retline);
-            }
-            return ret;
-        
-        }
-        
-        public static List<String> ListProducts()
-        {
-            //https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa394378(v=vs.85)
-            List<String> ret = new List<string>();
-            ret.Add("Name\tCaption\tDescription\tIdentifyingNumber\tInstallDate\tInstallSource\tLocalPackage\tPackageCode\tPackageName\tProductID\tSKUNumber\tVendor\tVersion");
-
-            string[] propertynames = new string[13] {"Name","Caption","Description","IdentifyingNumber","InstallDate","InstallSource","LocalPackage","PackageCode","PackageName","ProductID","SKUNumber","Vendor","Version"};
-
-            ManagementClass managementclass = new ManagementClass("Win32_Product");
-            ManagementObjectCollection managementobjectcollection = managementclass.GetInstances();
-            foreach (ManagementObject managementobject in managementobjectcollection)
-            {
-                string retline = "";
-
-                foreach (string propertyname in propertynames)
-                {
-                    if(managementobject.Properties[propertyname].Value != null)
-                    {
-                        retline += managementobject.Properties[propertyname].Value.ToString() + "\t";
-                    }
-                    else
-                    {
-                        retline += "\t";
-                    }
-                }
-/*
-                 retline += managementobject.Properties["Name"].Value.ToString() + "\t";
-                retline += managementobject.Properties["Caption"].Value.ToString() + "\t";
-                retline += managementobject.Properties["Description"].Value.ToString() + "\t";
-                retline += managementobject.Properties["IdentifyingNumber"].Value.ToString() + "\t";
-                retline += managementobject.Properties["InstallDate"].Value.ToString() + "\t";
-//                retline += managementobject.Properties["InstallLocation"].Value.ToString() + "\t";
-//                retline += managementobject.Properties["HelpLink"].Value.ToString() + "\t";
-//                retline += managementobject.Properties["HelpTelephone"].Value.ToString() + "\t";
-                retline += managementobject.Properties["InstallSource"].Value.ToString() + "\t";
-//                retline += managementobject.Properties["Language"].Value.ToString() + "\t";
-                retline += managementobject.Properties["LocalPackage"].Value.ToString() + "\t";
-//                retline += managementobject.Properties["PackageCache"].Value.ToString() + "\t";
-                retline += managementobject.Properties["PackageCode"].Value.ToString() + "\t";
-                retline += managementobject.Properties["PackageName"].Value.ToString() + "\t";
-                retline += managementobject.Properties["ProductID"].Value.ToString() + "\t";
-//                retline += managementobject.Properties["RegOwner"].Value.ToString() + "\t";
-//                retline += managementobject.Properties["RegCompany"].Value.ToString() + "\t";
-                retline += managementobject.Properties["SKUNumber"].Value.ToString() + "\t";
-//                retline += managementobject.Properties["Transforms"].Value.ToString() + "\t";
-//                retline += managementobject.Properties["URLInfoAbout"].Value.ToString() + "\t";
-//                retline += managementobject.Properties["URLUpdateInfo"].Value.ToString() + "\t";
-                retline += managementobject.Properties["Vendor"].Value.ToString() + "\t";
-                retline += managementobject.Properties["Version"].Value.ToString() + "\t";
-*/
-
 
                 ret.Add(retline);
             }

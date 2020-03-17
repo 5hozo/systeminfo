@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 //using TerminalServices;
 
 namespace systeminfo
@@ -7,17 +8,17 @@ namespace systeminfo
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-
 
             Console.WriteLine("hostname\t" + ConsoleServices.ConsoleManager.GetMachineName());
             Console.WriteLine("username\t" + ConsoleServices.ConsoleManager.GetUserName());
             Console.WriteLine("IPAddress\t" + ConsoleServices.ConsoleManager.GetIPAddress(false));
 
-            var listrtn = ConsoleServices.ConsoleManager.ListNetworkInterface();
+            List<String> listrtn;
+
+            listrtn = ConsoleServices.ConsoleManager.ListComputerSystem();
             foreach (var rtn in listrtn)
             {
-                Console.WriteLine("NetworkInterface\t" + rtn);                
+                Console.WriteLine("ComputerSystem\t" + rtn);                
             }
 
             listrtn = ConsoleServices.ConsoleManager.ListOS();
@@ -44,6 +45,12 @@ namespace systeminfo
                 Console.WriteLine("BIOS\t" + rtn);                
             }
 
+            listrtn = ConsoleServices.ConsoleManager.ListNetworkInterface();
+            foreach (var rtn in listrtn)
+            {
+                Console.WriteLine("NetworkInterface\t" + rtn);                
+            }
+
             listrtn = ConsoleServices.ConsoleManager.ListShareFolders();
             foreach (var rtn in listrtn)
             {
@@ -56,7 +63,7 @@ namespace systeminfo
                 Console.WriteLine("Windowsupdate\t" + rtn);                
             }
 
-            if(System.Environment.OSVersion.Version.Major > 8)//win10以降
+            if(System.IO.File.Exists(@"C:\Program Files\Windows Defender\MpClient.dll"))
             {
                 listrtn = ConsoleServices.ConsoleManager.ListWindowsDefender();
                 foreach (var rtn in listrtn)
@@ -69,6 +76,12 @@ namespace systeminfo
             foreach (var rtn in listrtn)
             {
                 Console.WriteLine("Products\t" + rtn);                
+            }
+
+            listrtn = ConsoleServices.ConsoleManager.ListService();
+            foreach (var rtn in listrtn)
+            {
+                Console.WriteLine("Service\t" + rtn);                
             }
 
             listrtn = TerminalServices.TSManager.ListSessions("localhost");

@@ -2,9 +2,14 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>latestMajor</LangVersion>
+    <VersionPefix>1.0.0</VersionPefix>
+    <VersionSuffix>beta</VersionSuffix>
+    <Authors>5hozo</Authors>
+    <PackageProjectUrl>https://github.com/5hozo/systeminfo</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/5hozo/systeminfo</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Management" Version="*"/>
-    <PackageReference Include="System.Data.SQLite.Core" Version="*"/>
   </ItemGroup>
 </Project>
