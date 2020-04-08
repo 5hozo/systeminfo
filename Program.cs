@@ -45,10 +45,40 @@ namespace systeminfo
                 Console.WriteLine("BIOS\t" + rtn);                
             }
 
+            listrtn = ConsoleServices.ConsoleManager.ListLocalUser();
+            foreach (var rtn in listrtn)
+            {
+                Console.WriteLine("LocalUser\t" + rtn);                
+            }
+
+            listrtn = ConsoleServices.ConsoleManager.ListLocalGroup();
+            foreach (var rtn in listrtn)
+            {
+                Console.WriteLine("LocalGroup\t" + rtn);                
+            }
+
+            listrtn = ConsoleServices.ConsoleManager.ListLocalGroupUser();
+            foreach (var rtn in listrtn)
+            {
+                Console.WriteLine("LocalGroupUser\t" + rtn);                
+            }
+
             listrtn = ConsoleServices.ConsoleManager.ListNetworkInterface();
             foreach (var rtn in listrtn)
             {
                 Console.WriteLine("NetworkInterface\t" + rtn);                
+            }
+
+            listrtn = ConsoleServices.ConsoleManager.ListDiskDrive();
+            foreach (var rtn in listrtn)
+            {
+                Console.WriteLine("DiskDrive\t" + rtn);                
+            }
+
+            listrtn = ConsoleServices.ConsoleManager.ListLogicalDisk();
+            foreach (var rtn in listrtn)
+            {
+                Console.WriteLine("LogicalDisk\t" + rtn);                
             }
 
             listrtn = ConsoleServices.ConsoleManager.ListShareFolders();
