@@ -1,0 +1,15 @@
+C:\Users\compf\systeminfo\bin\Debug\netcoreapp3.1\systeminfo.exe
+C:\Users\compf\systeminfo\bin\Debug\netcoreapp3.1\systeminfo.deps.json
+C:\Users\compf\systeminfo\bin\Debug\netcoreapp3.1\systeminfo.runtimeconfig.json
+C:\Users\compf\systeminfo\bin\Debug\netcoreapp3.1\systeminfo.runtimeconfig.dev.json
+C:\Users\compf\systeminfo\bin\Debug\netcoreapp3.1\systeminfo.dll
+C:\Users\compf\systeminfo\bin\Debug\netcoreapp3.1\systeminfo.pdb
+C:\Users\compf\systeminfo\bin\Debug\netcoreapp3.1\System.CodeDom.dll
+C:\Users\compf\systeminfo\bin\Debug\netcoreapp3.1\System.Management.dll
+C:\Users\compf\systeminfo\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Management.dll
+C:\Users\compf\systeminfo\obj\Debug\netcoreapp3.1\systeminfo.csprojAssemblyReference.cache
+C:\Users\compf\systeminfo\obj\Debug\netcoreapp3.1\systeminfo.AssemblyInfoInputs.cache
+C:\Users\compf\systeminfo\obj\Debug\netcoreapp3.1\systeminfo.AssemblyInfo.cs
+C:\Users\compf\systeminfo\obj\Debug\netcoreapp3.1\systeminfo.csproj.CopyComplete
+C:\Users\compf\systeminfo\obj\Debug\netcoreapp3.1\systeminfo.dll
+C:\Users\compf\systeminfo\obj\Debug\netcoreapp3.1\systeminfo.pdb
